@@ -1,7 +1,8 @@
--- create a table
+-- create a table -- (PRODUCTION)
 USE AUTOMODB
+
 CREATE TABLE categories(
-category_Id int PRIMARY KEY,
+category_Id int IDENTITY(1,1) PRIMARY KEY,
 category_Name varchar(50) NOT NULL
 );
 
@@ -21,12 +22,18 @@ FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE,
 FOREIGN KEY (brand_id) REFERENCES brands(brand_id) ON DELETE CASCADE -- on delete cascade is optional
 );
 
+CREATE TABLE stocks(
+store_id int IDENTITY(1,1) PRIMARY KEY,
+product_id int,
+quantity int NOT NULL,
+FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE
+);
 
 -- drop a table
+DROP TABLE STOCKS
 DROP TABLE products --drop foreign key table first and then primary key table
 DROP TABLE categories
 DROP TABLE BRANDS
-DROP TABLE customers
 
 
 -- alter table
@@ -40,7 +47,7 @@ ALTER TABLE products
 DROP COLUMN pro_description --delete column
 
 --- check constraint
-CREATE TABLE customers(
+CREATE TABLE customer(
 customer_id int IDENTITY(100,1) PRIMARY KEY,
 first_name varchar(50) NOT NULL,
 last_name varchar(50) NOT NULL,
