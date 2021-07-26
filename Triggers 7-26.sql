@@ -1,3 +1,4 @@
+USE POS
 -- TRIGGERS --
 -- CREATE TABLE TO STORE LOGS --
 CREATE TABLE PRODUCTS_AUDITS(
@@ -74,3 +75,46 @@ VALUES('test','test','123445321','a@fdadsfe.com','edd','da','sc','12345')
 
 SELECT * FROM CUSTOMER_AUDITS
 DELETE FROM CUSTOMERS WHERE customer_id = 1480
+
+
+
+
+--ASSIGNMENT--
+
+-- TRIGGERS --
+-- CREATE TABLE TO STORE LOGS --
+CREATE TABLE STORE_AUDITS(
+change_id int IDENTITY PRIMARY KEY,
+store_id int NOT NULL,
+store_name VARCHAR(255) NOT NULL,
+phone VARCHAR(25) NOT NULL,
+email VARCHAR(255) NOT NULL,
+street VARCHAR(255) NULL,
+city VARCHAR(255) NULL,
+state VARCHAR(10) NULL,
+zip_code VARCHAR(5) NULL,
+updated_at DATETIME NOT NULL,
+operation VARCHAR(10) NOT NULL
+);
+
+SELECT*FROM STORES
+
+-- CREATE TRIGGER --
+CREATE TRIGGER TRG_STORE_AUDIT
+ON stores
+AFTER INSERT, DELETE
+AS 
+BEGIN
+INSERT INTO STORE_AUDITS(store_id,store_name,phone,email,street,city,state,zip_code,updated_at,operation)
+SELECT I.store_id,I.store_name,I.phone,I.email,I.street,I.city,I.state,I.zip_code,GETDATE(),'INS' FROM INSERTED I
+UNION ALL
+SELECT D.store_id,D.store_name,D.phone,D.email,D.street,D.city,D.state,D.zip_code,GETDATE(),'DEL' FROM DELETED D
+END
+
+
+-- TEST TRIGGER--
+INSERT INTO stores(store_name,phone,email,street,city,state,zip_code)
+VALUES('test store','1234567890','abc@aaddd.com','sesame street','raleigh','sc','10020')
+
+SELECT*FROM STORE_AUDITS
+DELETE FROM stores WHERE store_id = 4
